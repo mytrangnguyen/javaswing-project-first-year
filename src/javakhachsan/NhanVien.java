@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,6 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;   
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -484,6 +487,7 @@ public class NhanVien extends javax.swing.JFrame {
             int row = tbEmployee.getSelectedRow();
             Object o = tbEmployee.getValueAt(row, 0);
             try {
+                InputStream img = new FileInputStream(new File(pic));
                 preStatement = conn.prepareStatement("UPDATE NhanVien SET MaNhanVien =?,TenNhanVien =?, NgaySinh=?,GioiTinh=?,MaChucVu=?,PhongBan=?,DiaChi=?,PhoneNumber=?,images=? where MaNhanVien=?");
                 preStatement.setString(1, txtID.getText());
                 preStatement.setString(2, txtName.getText());
@@ -505,12 +509,15 @@ public class NhanVien extends javax.swing.JFrame {
                 }
                 preStatement.setString(7, txtAdd.getText());
                 preStatement.setString(8, txtPhoneNumber.getText());
-                preStatement.setBytes(9, personImage);
+//                preStatement.setBytes(9, personImage);
+                preStatement.setBlob(9, img);
                 preStatement.setString(10, String.valueOf(o));
                 preStatement.executeUpdate();
                 //model.setRowCount(0);
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(NhanVien.class.getName()).log(Level.SEVERE, null, ex);
             }
             model.setRowCount(0);
             //showTable();
@@ -659,7 +666,7 @@ public class NhanVien extends javax.swing.JFrame {
         pic = savepicture.getText();
         ImageIcon img = new ImageIcon(pic);
         lblImage.setIcon(img);
-        btnImage.setEnabled(false);
+//        btnImage.setEnabled(false);
 
     }//GEN-LAST:event_btnImageActionPerformed
 
