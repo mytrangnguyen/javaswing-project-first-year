@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -34,6 +35,7 @@ public class NhanVien extends javax.swing.JFrame {
     PreparedStatement preStatement;
     String fileName = null;
     byte[] personImage = null;
+    String pic = "user.png";
 
     /**
      * Creates new form NhanVien
@@ -143,6 +145,7 @@ public class NhanVien extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
+        savepicture = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -178,6 +181,8 @@ public class NhanVien extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
+        getContentPane().add(savepicture);
+        savepicture.setBounds(400, 120, 90, 30);
 
         jLabel2.setFont(new java.awt.Font("MingLiU_HKSCS-ExtB", 1, 14)); // NOI18N
         jLabel2.setText("ID");
@@ -363,7 +368,7 @@ public class NhanVien extends javax.swing.JFrame {
 
         lblImage.setBackground(new java.awt.Color(255, 51, 51));
         getContentPane().add(lblImage);
-        lblImage.setBounds(530, 10, 130, 110);
+        lblImage.setBounds(520, 0, 130, 110);
 
         btnImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/camera.png"))); // NOI18N
         btnImage.addActionListener(new java.awt.event.ActionListener() {
@@ -427,8 +432,9 @@ public class NhanVien extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExitActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:ư
         try {
+            InputStream img = new FileInputStream(new File(pic));
             String sql = "insert into NhanVien values (?,?,?,?,?,?,?,?,?)";
             preStatement = conn.prepareStatement(sql);
             preStatement.setString(1, txtID.getText());
@@ -450,7 +456,8 @@ public class NhanVien extends javax.swing.JFrame {
             }
             preStatement.setString(7, txtAdd.getText());
             preStatement.setString(8, txtPhoneNumber.getText());
-            preStatement.setBytes(9, personImage);
+//            preStatement.setBytes(9, personImage);
+            preStatement.setBlob(9, img);
             int x = preStatement.executeUpdate();
             if (x > 0) {
                 JOptionPane.showMessageDialog(null, "You have successfully added information");
@@ -619,30 +626,41 @@ public class NhanVien extends javax.swing.JFrame {
 //        btnFemale.setSelected(false);
         buttonGroup1.clearSelection();
         //lblImage.setEnabled(false);
+        lblImage.setIcon( null );    
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImageActionPerformed
         // TODO add your handling code here:
+//        JFileChooser chooser = new JFileChooser();
+//        chooser.showOpenDialog(null);
+//        File file = chooser.getSelectedFile();
+//        fileName = file.getAbsolutePath();
+//        ImageIcon imageIcon = new ImageIcon(new ImageIcon(fileName).getImage().getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_SMOOTH));
+//        lblImage.setIcon(imageIcon);
+//        try {
+//            File image = new File(fileName);
+//            FileInputStream fis = new FileInputStream(image);
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            byte[] buf = new byte[1024];
+//            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+//                //bos.write(,0,readNum);
+//                bos.write(buf, 0, readNum);
+//            }
+//            personImage = bos.toByteArray();
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, e);
+//        }
         JFileChooser chooser = new JFileChooser();
         chooser.showOpenDialog(null);
-        File file = chooser.getSelectedFile();
-        fileName = file.getAbsolutePath();
-        ImageIcon imageIcon = new ImageIcon(new ImageIcon(fileName).getImage().getScaledInstance(lblImage.getWidth(), lblImage.getHeight(), Image.SCALE_SMOOTH));
-        lblImage.setIcon(imageIcon);
-        try {
-            File image = new File(fileName);
-            FileInputStream fis = new FileInputStream(image);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buf = new byte[1024];
-            for (int readNum; (readNum = fis.read(buf)) != -1;) {
-                //bos.write(,0,readNum);
-                bos.write(buf, 0, readNum);
-            }
-            personImage = bos.toByteArray();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
+        File f = chooser.getSelectedFile();
+        String filename = f.getAbsolutePath();
+        savepicture.setText(filename);
+        pic = savepicture.getText();
+        ImageIcon img = new ImageIcon(pic);
+        lblImage.setIcon(img);
+        btnImage.setEnabled(false);
+
     }//GEN-LAST:event_btnImageActionPerformed
 
     private void txtBirthdayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBirthdayActionPerformed
@@ -767,6 +785,7 @@ public class NhanVien extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblImage;
+    private javax.swing.JLabel savepicture;
     private javax.swing.JTable tbEmployee;
     private javax.swing.JTextField txtAdd;
     private javax.swing.JTextField txtBirthday;
